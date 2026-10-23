@@ -1,0 +1,28 @@
+[project]
+name = "pdf-compiler"
+version = "0.1.0"
+description = "A fast and smart CLI tool and Python library to compile images into a single PDF"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pillow>=10.0.0",
+]
+
+[project.scripts]
+image_to_pdf = "pdf_compiler.cli:main"
+image-to-pdf = "pdf_compiler.cli:main"
+pdf-compiler = "pdf_compiler.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.6,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
