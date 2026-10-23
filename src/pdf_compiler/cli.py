@@ -221,9 +221,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         )
 
         if not args.quiet:
-            size_kb = result.stat().st_size / 1024
-            size_str = f"{size_kb / 1024:.2f} MB" if size_kb >= 1024 else f"{size_kb:.1f} KB"
-            print(f"Successfully compiled {len(image_files)} images into '{result}' ({size_str})")
+            print(f"PDF created: {result.resolve()}")
 
         return 0
 

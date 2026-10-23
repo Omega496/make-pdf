@@ -1,18 +1,19 @@
-# PDF Compiler
+# PDF Compiler & Converter
 
-A fast, smart, and lightweight Python CLI tool and library for compiling images (`JPG`, `PNG`, `WEBP`, `BMP`, `TIFF`) into clean, beautifully formatted multi-page PDF documents.
+A fast, smart, and lightweight Python CLI toolkit and library for compiling images into PDFs, and converting plain text (`.txt`) and Markdown (`.md`) files into standard Google Docs formatted PDFs.
 
 ---
 
 ## ✨ Features
 
-- 📑 **Natural Numerical Sorting**: Sorts files naturally (e.g., `page1`, `page2`, `...`, `page10` instead of `page1`, `page10`, `page2`), preserving correct page order for grade cards, scans, and notes.
-- 📱 **Auto EXIF Rotation**: Automatically rotates phone photos and camera scans using EXIF orientation metadata so pages are never sideways or upside-down.
+- 📝 **Plain Text to PDF (`txt_to_pdf`)**: Convert `.txt` files directly into clean, standard Google Docs formatted PDFs (Letter size, 1-inch margins, Arial/Helvetica, 1.15 line spacing).
+- 📑 **Markdown to PDF (`md_to_pdf`)**: Convert `.md` files to Google Docs style PDFs with full support for headings, bold/italic, lists, code blocks, tables, blockquotes, horizontal rules, and footer page numbering.
+- 🎯 **Smart Default Output Naming**: If output PDF filename is omitted, automatically creates `<filename>.pdf` matching the source file name.
+- 🖼️ **Image Compilation (`image_to_pdf`)**: Compile image folders (`JPG`, `PNG`, `WEBP`, `BMP`, `TIFF`) into single multi-page PDFs with natural sorting (e.g., `page2` before `page10`).
+- 📱 **Auto EXIF Rotation**: Automatically rotates phone photos and camera scans using EXIF orientation metadata so pages are never sideways.
 - 🎨 **Smart Transparency Handling**: Transparent PNG/WEBP images are composited over a clean white background rather than rendering as black blocks.
-- 🗂️ **Wide Image Format Support**: Works with `.jpg`, `.jpeg`, `.png`, `.webp`, `.bmp`, `.tiff`, and `.tif` files (case-insensitive, including `.JPG` and `.PNG`).
 - 🗜️ **Compression & Optimization**: Control output file size using `--quality` (1–100) and automatic PDF stream optimization.
-- 🛡️ **Robust Resource Management**: Clean file handle handling preventing file descriptor leaks, with options to skip corrupted files (`--skip-corrupted`).
-- 💻 **Multiple Interfaces**: Use directly from the command line (`image_to_pdf` or `python main.py`) or import as a Python library into your own scripts.
+- 💻 **Multiple CLI Interfaces**: Dedicated global commands (`image_to_pdf`, `txt_to_pdf`, `md_to_pdf`) or import directly as a Python library.
 
 ---
 
@@ -29,14 +30,14 @@ Set up the `pdf-compiler` repository in my current environment:
 2. **Install & Build**:
    - If `uv` is available (recommended):
      - Run `uv sync` to install dependencies.
-     - Run `uv tool install --editable . --force` so the `image_to_pdf` CLI is available globally from any directory.
+     - Run `uv tool install --editable . --force` so the `image_to_pdf`, `txt_to_pdf`, and `md_to_pdf` CLIs are available globally from any directory.
    - If using standard `pip`:
      - Create and activate a venv (`python3 -m venv .venv && source .venv/bin/activate`).
      - Run `pip install -e ".[dev]"`.
 3. **Run Verification**:
-   - Run the test suite: `uv run python -m pytest` (or `pytest`).
-   - Verify CLI help: `image_to_pdf --help`.
-4. **Confirm**: Report test results and show a quick 1-line example to run `image_to_pdf`.
+   - Run the test suite: `uv run python -m pytest` (or `pytest`) to verify all 49 tests pass.
+   - Verify CLI help: `image_to_pdf --help`, `txt_to_pdf --help`, and `md_to_pdf --help`.
+4. **Confirm**: Report test results and show quick 1-line examples to run `image_to_pdf`, `txt_to_pdf`, and `md_to_pdf`.
 ````
 
 ---
@@ -74,6 +75,8 @@ pip install -e ".[dev]"
 #### 3. Verify Installation
 ```bash
 image_to_pdf --help
+txt_to_pdf --help
+md_to_pdf --help
 uv run python -m pytest
 ```
 
@@ -83,117 +86,122 @@ uv run python -m pytest
 
 ## 📖 How to Use
 
-### 1. Command Line Interface (CLI)
+### 1. Plain Text to PDF (`txt_to_pdf`)
 
-You can run `image_to_pdf` directly (or via `uv run image_to_pdf` or `python main.py`).
+Convert any plain text file (`.txt`) directly into a clean, standard Google Docs formatted PDF (US Letter, 1-inch margins, Arial/Helvetica 11pt, 1.15 line spacing, and footer page numbering).
 
-#### Basic Examples
+```bash
+txt_to_pdf <textfilename>.txt [pdffilename.pdf]
+```
 
-- **Compile images in the current directory into a named PDF:**
+#### Examples:
+- **Default output (creates `notes.pdf`):**
+  ```bash
+  txt_to_pdf notes.txt
+  ```
+- **Custom output PDF name:**
+  ```bash
+  txt_to_pdf notes.txt my_document.pdf
+  ```
+- **Using explicit output flag:**
+  ```bash
+  txt_to_pdf ./logs/daily_report.txt -o ./reports/final.pdf
+  ```
+- **Disable footer page numbers:**
+  ```bash
+  txt_to_pdf notes.txt --no-page-numbers
+  ```
+
+---
+
+### 2. Markdown to PDF (`md_to_pdf`)
+
+Convert any Markdown file (`.md`) into a Google Docs styled PDF with full support for headings (H1–H6), bold/italic text, numbered/bulleted lists, code blocks, tables, blockquotes, and horizontal rules.
+
+```bash
+md_to_pdf <mdfilename>.md [pdffilename.pdf]
+```
+
+#### Examples:
+- **Default output (creates `README.pdf`):**
+  ```bash
+  md_to_pdf README.md
+  ```
+- **Custom output PDF name:**
+  ```bash
+  md_to_pdf project_spec.md specification.pdf
+  ```
+- **Using explicit output flag:**
+  ```bash
+  md_to_pdf ./docs/guide.md -o ./dist/user_manual.pdf
+  ```
+- **Disable footer page numbers:**
+  ```bash
+  md_to_pdf summary.md --no-page-numbers
+  ```
+
+---
+
+### 3. Images to PDF (`image_to_pdf`)
+
+Compile image folders or specific images into a single multi-page PDF with natural sorting, EXIF auto-rotation, and compression options.
+
+```bash
+image_to_pdf [INPUT_PATH] [OUTPUT_PATH]
+```
+
+#### Basic Examples:
+- **Compile images in current directory into a named PDF:**
   ```bash
   image_to_pdf "Grade_Cards.pdf"
   ```
-  *(If no input folder is specified, `image_to_pdf` automatically searches your current working directory).*
-
-- **Compile images from a specific directory:**
-  ```bash
-  image_to_pdf ./my_images -o "document.pdf"
-  ```
-  or simply:
+- **Compile images from a specific folder:**
   ```bash
   image_to_pdf ./my_images "document.pdf"
   ```
-
-- **Compile with custom input and output flags:**
+- **Compile with explicit flags:**
   ```bash
-  image_to_pdf -i /home/user/scans -o /home/user/scans/compiled.pdf
+  image_to_pdf -i ./scans -o ./compiled.pdf --quality 75
   ```
 
-- **Default run (compiles current directory to `output.pdf`):**
-  ```bash
-  image_to_pdf
-  ```
-
----
-
-#### Advanced Options & Flags
-
+#### Options & Flags:
 | Flag | Description | Default |
 |------|-------------|---------|
-| `-i`, `--input PATH` | Path to the directory containing images | Current directory |
+| `-i`, `--input PATH` | Path to folder containing images | Current directory |
 | `-o`, `--output PATH` | Output PDF filename or path | `output.pdf` |
-| `--sort {natural,alpha,none}` | Sorting method: `natural` (`page2` before `page10`), `alpha` (lexicographical), or `none` | `natural` |
-| `--reverse` | Reverse the image ordering | `False` |
-| `--quality N` | JPEG compression quality (1–100) to reduce PDF size | `None` (lossless/original) |
+| `--sort {natural,alpha,none}` | Natural (`page2` before `page10`), alphabetical, or none | `natural` |
+| `--reverse` | Reverse image order | `False` |
+| `--quality N` | JPEG compression quality (1–100) | Lossless/original |
 | `--no-optimize` | Disable Pillow PDF stream size optimization | Enabled |
-| `--no-exif` | Disable automatic rotation based on EXIF camera metadata | Enabled |
-| `--skip-corrupted` | Skip unreadable/corrupted files instead of stopping | `False` |
-| `-v`, `--verbose` | Print detailed progress and list each image processed | `False` |
-| `-q`, `--quiet` | Suppress all output except errors | `False` |
-| `--help` | Show command line help and exit | — |
-| `--version` | Display version number | — |
-
-#### Practical Examples
-
-- **Compress output PDF for email / uploads:**
-  ```bash
-  image_to_pdf ./grade_cards -o "Grades_Compressed.pdf" --quality 75
-  ```
-
-- **Compile in alphabetical order with verbose log:**
-  ```bash
-  image_to_pdf ./receipts -o "Receipts_2026.pdf" --sort alpha -v
-  ```
-
-- **Compile while skipping any broken image files:**
-  ```bash
-  image_to_pdf ./scans -o "Scans.pdf" --skip-corrupted
-  ```
+| `--no-exif` | Disable automatic EXIF camera rotation | Enabled |
+| `--skip-corrupted` | Skip unreadable files without failing | `False` |
+| `-v`, `--verbose` | Detailed progress log | `False` |
+| `-q`, `--quiet` | Errors only | `False` |
 
 ---
 
-### 2. Using `main.py`
+### 4. Using as a Python Library
 
-You can also run the script directly with Python:
-
-```bash
-python main.py "Grade_Cards.pdf"
-python main.py ./scans -o "Scans.pdf" --quality 80
-```
-
-Or with `uv`:
-```bash
-uv run python main.py "Grade_Cards.pdf"
-```
-
----
-
-### 3. Using as a Python Library
-
-You can import `pdf_compiler` directly into your Python scripts:
+You can import all compilation tools directly into your own Python applications:
 
 ```python
-from pdf_compiler import compile_folder, compile_images
+from pdf_compiler import txt_to_pdf, md_to_pdf, compile_folder, compile_images
 
-# Example 1: Compile all images in a directory
-pdf_path = compile_folder(
+# 1. Convert Text to Google Docs PDF
+txt_to_pdf("meeting_notes.txt")  # Generates meeting_notes.pdf
+txt_to_pdf("report.txt", output_pdf="final_report.pdf")
+
+# 2. Convert Markdown to Google Docs PDF
+md_to_pdf("README.md")  # Generates README.pdf
+md_to_pdf("docs/spec.md", output_pdf="spec.pdf")
+
+# 3. Compile Images to PDF
+compile_folder(
     folder_path="./documents",
     output_pdf="Compiled_Documents.pdf",
-    sort_mode="natural",   # 'natural', 'alpha', or 'none'
-    quality=85,            # Optional compression
-    auto_rotate=True       # Auto-rotate phone camera photos
-)
-print(f"Generated PDF at: {pdf_path}")
-
-# Example 2: Compile a custom list of image files
-custom_images = [
-    "page_intro.png",
-    "page_content.jpg",
-    "page_summary.webp"
-]
-pdf_path = compile_images(
-    image_paths=custom_images,
-    output_pdf="Report.pdf"
+    sort_mode="natural",
+    quality=85,
+    auto_rotate=True,
 )
 ```
 
@@ -201,11 +209,11 @@ pdf_path = compile_images(
 
 ## 🧪 Running Tests
 
-The test suite covers compilation, natural sorting, EXIF orientation, transparency handling, corrupted file handling, and CLI commands.
+The test suite covers text conversion, markdown parsing, natural sorting, EXIF orientation, transparency, corrupted files, and CLI commands (49 tests).
 
 Run tests using `uv`:
 ```bash
-uv run pytest -v
+uv run python -m pytest -v
 ```
 
 Or with standard `pytest`:
@@ -219,16 +227,23 @@ pytest -v
 
 ```
 pdf-compiler/
-├── pyproject.toml         # Package metadata, scripts, and dependencies
-├── uv.lock                # Locked dependency tree
-├── README.md              # Documentation and guide
-├── main.py                # Standalone entry point
+├── pyproject.toml             # Package metadata, scripts, and dependencies
+├── uv.lock                    # Locked dependency tree
+├── README.md                  # Main documentation
+├── INSTALL.md                 # Dedicated installation guide & AI prompt
+├── main.py                    # Standalone entry point
 ├── src/
 │   └── pdf_compiler/
-│       ├── __init__.py    # Public library exports
-│       ├── compiler.py    # Image processing and PDF creation logic
-│       └── cli.py         # Command-line interface parser
+│       ├── __init__.py        # Public library exports
+│       ├── compiler.py        # Image compilation logic
+│       ├── text_compiler.py   # Text & Markdown Google Docs PDF generator
+│       ├── cli.py             # CLI parser for image_to_pdf
+│       ├── txt_cli.py         # CLI parser for txt_to_pdf
+│       └── md_cli.py          # CLI parser for md_to_pdf
 └── tests/
-    ├── test_compiler.py   # Unit tests for image compilation & sorting
-    └── test_cli.py        # CLI argument parsing and execution tests
+    ├── test_compiler.py       # Tests for image compilation & sorting
+    ├── test_cli.py            # Tests for image_to_pdf CLI
+    ├── test_text_compiler.py  # Tests for txt_to_pdf & md_to_pdf logic
+    ├── test_txt_cli.py        # Tests for txt_to_pdf CLI
+    └── test_md_cli.py         # Tests for md_to_pdf CLI
 ```

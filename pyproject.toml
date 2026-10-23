@@ -5,13 +5,19 @@ description = "A fast and smart CLI tool and Python library to compile images in
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "markdown>=3.5.0",
     "pillow>=10.0.0",
+    "xhtml2pdf>=0.2.15",
 ]
 
 [project.scripts]
 image_to_pdf = "pdf_compiler.cli:main"
 image-to-pdf = "pdf_compiler.cli:main"
 pdf-compiler = "pdf_compiler.cli:main"
+txt_to_pdf = "pdf_compiler.txt_cli:main"
+txt-to-pdf = "pdf_compiler.txt_cli:main"
+md_to_pdf = "pdf_compiler.md_cli:main"
+md-to-pdf = "pdf_compiler.md_cli:main"
 
 [project.optional-dependencies]
 dev = [

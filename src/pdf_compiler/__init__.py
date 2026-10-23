@@ -10,6 +10,7 @@ from pdf_compiler.compiler import (
     natural_sort_key,
     process_image,
 )
+from pdf_compiler.text_compiler import md_to_pdf, txt_to_pdf
 
 __version__ = "0.1.0"
 
@@ -21,6 +22,8 @@ __all__ = [
     "natural_sort_key",
     "process_image",
     "SUPPORTED_EXTENSIONS",
+    "txt_to_pdf",
+    "md_to_pdf",
     "main",
     "__version__",
 ]

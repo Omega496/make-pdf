@@ -23,6 +23,7 @@ from pdf_compiler.compiler import (
     find_image_files,
     images_to_pdf,
 )
+from pdf_compiler.text_compiler import md_to_pdf, txt_to_pdf
 
 __all__ = [
     "main",
@@ -31,6 +32,8 @@ __all__ = [
     "compile_images",
     "find_image_files",
     "SUPPORTED_EXTENSIONS",
+    "txt_to_pdf",
+    "md_to_pdf",
 ]
 
 if __name__ == "__main__":

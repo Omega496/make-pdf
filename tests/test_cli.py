@@ -70,7 +70,7 @@ def test_cli_compile_success(image_directory: Path, tmp_path: Path, capsys):
     assert ret == 0
     assert out_pdf.is_file()
     captured = capsys.readouterr()
-    assert "Successfully compiled 3 images" in captured.out
+    assert "PDF created:" in captured.out
 
 
 def test_cli_compile_verbose(image_directory: Path, tmp_path: Path, capsys):
